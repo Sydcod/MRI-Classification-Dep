@@ -1,5 +1,47 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
+## 🧠 General Guidelines
+
+- Prioritize **clarity** and **maintainability** in code.
+- Ensure all components are **modular** and **reusable**.
+- Maintain a consistent **coding style** across the project.
+
+## 🧪 Model Development
+
+- Utilize **PyTorch** with the **DenseNet169** architecture, adapted for grayscale MRI inputs.
+- Implement **Focal Loss** with label smoothing (`alpha = 0.1`) to address class imbalance.
+- Apply **Stratified K-Fold Cross-Validation** for robust performance estimation.
+
+## 🔍 Explainable AI (XAI)
+
+- Integrate the following interpretability techniques:
+  - **Grad-CAM**: For highlighting important regions in the image.
+  - **ScoreCAM**: For accurate visualizations without relying on gradients.
+  - **SHAP**: For feature importance analysis.
+- Ensure visualizations overlay with an alpha of `0.5` and use the `jet` colormap.
+
+## 🌐 API & Frontend
+
+- Develop the backend using **Flask**, exposing endpoints for prediction and explanation.
+- Build the frontend with **React** and **TypeScript**, ensuring seamless integration with the API.
+- Adhere to component naming conventions and maintain a consistent folder structure.
+
+## 🧪 Testing & Validation
+
+- Write unit tests for critical components using `pytest`.
+- Validate model performance on a separate test set comprising 15% of the data.
+
+## ⚠️ Best Practices
+
+- Avoid using deprecated or unsupported libraries.
+- Maintain clear and concise documentation in `README.md` and related files.
+- Regularly update dependencies to their latest stable versions.
+
+@README.md
+@train.py
+@api/predict.py
+@frontend/src/components/ExplanationViewer.tsx
+
