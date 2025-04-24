@@ -255,7 +255,11 @@ def main():
             break
     
     # Load best model for evaluation
-    model.load_state_dict(torch.load(os.path.join(checkpoint_dir, f"{run_name}_best.pth")))
+    checkpoint = torch.load(
+        os.path.join(checkpoint_dir, f"{run_name}_best.pth"),
+        map_location=device
+    )
+    model.load_state_dict(checkpoint['model_state_dict'])
     
     # Evaluate on test set
     test_loss, test_acc, test_f1 = validate(model, test_loader, criterion, device)
