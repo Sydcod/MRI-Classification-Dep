@@ -3,6 +3,7 @@ import ImageUploader from '../components/ImageUploader';
 import PredictionResult from '../components/PredictionResult';
 import XAIVisualization from '../components/XAIVisualization';
 import AIInterpretation from '../components/AIInterpretation';
+import SampleImages from '../components/SampleImages';
 import { predictionService, PredictionResult as PredictionResultType, ExplanationResult, InterpretationResult } from '../services/apiService';
 
 const PredictPage: React.FC = () => {
@@ -119,6 +120,12 @@ const PredictPage: React.FC = () => {
           <ImageUploader 
             onImageSelect={handleImageSelect}
             accept=".jpg,.jpeg,.png,.tif,.tiff"
+            className="mb-4"
+            selectedImage={selectedImage}
+          />
+          
+          <SampleImages
+            onSelectSample={handleImageSelect}
             className="mb-4"
           />
           

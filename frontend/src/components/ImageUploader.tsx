@@ -5,6 +5,7 @@ interface ImageUploaderProps {
   accept?: string;
   maxSize?: number;
   className?: string;
+  selectedImage?: File | null;
 }
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({
@@ -12,6 +13,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   accept = 'image/*',
   maxSize = 5242880, // 5MB
   className = '',
+  selectedImage = null,
 }) => {
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -97,10 +99,10 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           className="hidden"
         />
         
-        {preview ? (
+        {selectedImage || preview ? (
           <div className="flex flex-col items-center">
             <img 
-              src={preview} 
+              src={selectedImage ? URL.createObjectURL(selectedImage) : preview || ''}
               alt="Preview" 
               className="max-h-64 max-w-full rounded mb-2 object-contain" 
             />
