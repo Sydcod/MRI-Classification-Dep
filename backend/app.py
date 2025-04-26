@@ -6,6 +6,7 @@ import torch
 # Import API blueprints
 from backend.api.prediction import prediction_bp
 from backend.api.explanation import explanation_bp
+from backend.api.interpretation import interpretation_bp
 
 def create_app(config=None):
     """
@@ -41,6 +42,7 @@ def create_app(config=None):
     # Register blueprints
     app.register_blueprint(prediction_bp, url_prefix='/api')
     app.register_blueprint(explanation_bp, url_prefix='/api')
+    app.register_blueprint(interpretation_bp, url_prefix='/api')
     
     # Root route for health check
     @app.route('/')

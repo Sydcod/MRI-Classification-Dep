@@ -41,6 +41,10 @@ export interface XAIMethodsResponse {
   methods: Record<string, XAIMethod>;
 }
 
+export interface InterpretationResult {
+  interpretation: string;
+}
+
 // Prediction service
 export const predictionService = {
   // Submit an image for prediction
@@ -50,16 +54,23 @@ export const predictionService = {
     formData.append('model_id', modelId);
     
     try {
+      console.log('Sending prediction request to:', '/api/predict');
+      console.log('Image file:', imageFile.name, imageFile.type, imageFile.size);
+      
       const response = await apiClient.post('/predict', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
       
+      console.log('Prediction response:', response.data);
       return response.data;
     } catch (error) {
+      console.error('Prediction error:', error);
       if (axios.isAxiosError(error) && error.response) {
-        throw new Error(error.response.data?.error || 'Prediction failed');
+        console.error('Response error data:', error.response.data);
+        console.error('Response status:', error.response.status);
+        throw new Error(error.response.data?.error || `Prediction failed with status ${error.response.status}`);
       }
       throw new Error('Network error occurred during prediction');
     }
@@ -114,6 +125,40 @@ export const predictionService = {
         throw new Error(error.response.data?.error || 'Failed to get XAI methods');
       }
       throw new Error('Network error occurred while fetching XAI methods');
+    }
+  },
+  
+  // Generate AI interpretation using OpenAI Vision
+  async generateInterpretation(explanationResult: ExplanationResult): Promise<InterpretationResult> {
+    try {
+      console.log('Sending interpretation request to:', '/api/interpret');
+      
+      // Extract the data we need to send to the API
+      const interpretationData = {
+        original_image: explanationResult.original_image,
+        heatmap_image: explanationResult.heatmap_image,
+        overlay_image: explanationResult.overlay_image,
+        prediction: explanationResult.prediction,
+        confidence: explanationResult.confidence
+      };
+      
+      const response = await apiClient.post('/interpret', interpretationData, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        timeout: 60000 // 60 seconds timeout for longer processing
+      });
+      
+      console.log('Interpretation response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Interpretation error:', error);
+      if (axios.isAxiosError(error) && error.response) {
+        console.error('Response error data:', error.response.data);
+        console.error('Response status:', error.response.status);
+        throw new Error(error.response.data?.error || `Interpretation failed with status ${error.response.status}`);
+      }
+      throw new Error('Network error occurred during interpretation');
     }
   }
 };

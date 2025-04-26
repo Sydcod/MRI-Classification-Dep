@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import ImageUploader from '../components/ImageUploader';
 import PredictionResult from '../components/PredictionResult';
 import XAIVisualization from '../components/XAIVisualization';
-import { predictionService, PredictionResult as PredictionResultType, ExplanationResult } from '../services/apiService';
+import AIInterpretation from '../components/AIInterpretation';
+import { predictionService, PredictionResult as PredictionResultType, ExplanationResult, InterpretationResult } from '../services/apiService';
 
 const PredictPage: React.FC = () => {
   // State for the selected image
@@ -18,6 +19,11 @@ const PredictPage: React.FC = () => {
   const [isExplaining, setIsExplaining] = useState<boolean>(false);
   const [explanationError, setExplanationError] = useState<string | null>(null);
   const [xaiMethod, setXaiMethod] = useState<string>('gradcam');
+  
+  // State for AI interpretation
+  const [interpretation, setInterpretation] = useState<string | null>(null);
+  const [isInterpreting, setIsInterpreting] = useState<boolean>(false);
+  const [interpretationError, setInterpretationError] = useState<string | null>(null);
   
   // Handle image selection
   const handleImageSelect = (file: File) => {
@@ -76,6 +82,26 @@ const PredictPage: React.FC = () => {
     }
   };
   
+  // Generate AI interpretation
+  const handleGenerateInterpretation = async () => {
+    if (!explanation) {
+      setInterpretationError('Explanation is required for generating an interpretation');
+      return;
+    }
+    
+    setIsInterpreting(true);
+    setInterpretationError(null);
+    
+    try {
+      const result = await predictionService.generateInterpretation(explanation);
+      setInterpretation(result.interpretation);
+    } catch (error) {
+      setInterpretationError(error instanceof Error ? error.message : 'Failed to generate interpretation');
+    } finally {
+      setIsInterpreting(false);
+    }
+  };
+  
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="mb-8">
@@ -114,6 +140,15 @@ const PredictPage: React.FC = () => {
             isLoading={isPredicting}
             error={predictionError}
           />
+          
+          <AIInterpretation
+            interpretation={interpretation}
+            isLoading={isInterpreting}
+            error={interpretationError}
+            onRequestInterpretation={handleGenerateInterpretation}
+            canRequestInterpretation={!!explanation && !isInterpreting}
+            className="mt-6"
+          />
         </div>
         
         {/* Right column - Visualization */}
@@ -133,4 +168,4 @@ const PredictPage: React.FC = () => {
   );
 };
 
-export default PredictPage; 
+export default PredictPage;

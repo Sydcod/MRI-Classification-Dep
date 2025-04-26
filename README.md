@@ -9,6 +9,7 @@ A comprehensive web application for brain MRI classification utilizing advanced 
 - 🖥️ Interactive web interface for image upload and analysis
 - 📊 Real-time classification with confidence scores
 - 🧪 Advanced model training with focal loss and class balancing
+- 🔎 AI-powered medical interpretation of MRI scans using OpenAI Vision API
 
 ## 🏗️ Project Structure
 
@@ -39,7 +40,12 @@ The project is divided into two main components:
    pip install -r requirements.txt
    ```
 
-3. Run the Flask application:
+3. Create a `.env` file in the backend directory with your OpenAI API key:
+   ```
+   OPENAI_API_KEY=your_openai_api_key_here
+   ```
+
+4. Run the Flask application:
    ```bash
    python app.py
    ```
@@ -93,11 +99,24 @@ The application includes the following XAI methods:
 
 - **Grad-CAM**: Visualizes important regions in the image that influenced the model's decision.
 
+## 🩺 AI Medical Interpretation
+
+The application features an AI-powered medical interpretation capability that:
+
+- Uses the OpenAI Vision API (GPT-4o) to analyze MRI scans and classification results
+- Generates comprehensive medical reports with clinical insights
+- Provides structured analysis including:
+  - Confirmation or challenge of the AI classification
+  - Detailed description of visible abnormalities
+  - Potential differential diagnoses
+  - Suggested follow-up tests and treatment approaches
+
 ## 📝 API Endpoints
 
 - **POST /api/predict**: Upload an MRI image and get a classification prediction
 - **POST /api/explain**: Generate XAI visualizations for a given MRI image
 - **GET /api/methods**: Get available XAI methods
+- **POST /api/interpret**: Generate AI-powered medical interpretation of MRI images and classification results
 
 ## 🔍 Dataset
 
