@@ -32,6 +32,8 @@ const PredictPage: React.FC = () => {
     setExplanation(null);
     setPredictionError(null);
     setExplanationError(null);
+    setInterpretation(null);
+    setInterpretationError(null);
   };
   
   // Handle prediction
