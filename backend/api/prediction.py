@@ -41,7 +41,7 @@ def load_model(model_path, num_classes=4, device='cpu'):
     model = DenseNet169MRI(num_classes=num_classes)
     
     # Load weights
-    checkpoint = torch.load(model_path, map_location=device)
+    checkpoint = torch.load(model_path, map_location=device, weights_only=False)
     if 'model_state_dict' in checkpoint:
         model.load_state_dict(checkpoint['model_state_dict'])
     else:

@@ -93,7 +93,7 @@ const XAIVisualization: React.FC<XAIVisualizationProps> = ({
                 <p className="text-sm font-medium text-gray-700 mb-2">Original Image</p>
                 <div className="rounded border border-gray-200 bg-gray-50 p-1">
                   <img 
-                    src={originalImage} 
+                    src={`data:image/png;base64,${originalImage}`} 
                     alt="Original MRI scan" 
                     className="w-full h-auto object-contain rounded max-h-64"
                   />
@@ -109,7 +109,7 @@ const XAIVisualization: React.FC<XAIVisualizationProps> = ({
                 </p>
                 <div className="rounded border border-gray-200 bg-gray-50 p-1">
                   <img 
-                    src={overlayImage} 
+                    src={`data:image/png;base64,${overlayImage}`} 
                     alt={`${xaiMethod} explanation overlay`}
                     className="w-full h-auto object-contain rounded max-h-64"
                   />

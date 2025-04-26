@@ -4,8 +4,8 @@ from flask_cors import CORS
 import torch
 
 # Import API blueprints
-from api.prediction import prediction_bp
-from api.explanation import explanation_bp
+from backend.api.prediction import prediction_bp
+from backend.api.explanation import explanation_bp
 
 def create_app(config=None):
     """
