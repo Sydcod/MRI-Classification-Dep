@@ -85,6 +85,7 @@ export const predictionService = {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        timeout: 0, // no timeout for heavy XAI methods
       });
       
       // If the API response doesn't match our expected format, transform it here
