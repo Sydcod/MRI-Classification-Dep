@@ -26,7 +26,7 @@ const App: React.FC = () => {
           
           <div>
             <a 
-              href="https://github.com/yourusername/brain-mri-classifier" 
+              href="https://github.com/Sydcod/MRI" 
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-600 hover:text-gray-900"
