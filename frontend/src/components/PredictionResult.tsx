@@ -21,7 +21,10 @@ const PredictionResult: React.FC<PredictionResultProps> = ({
     if (confidence >= 0.5) return 'text-yellow-600';
     return 'text-red-600';
   };
-  
+
+  // Remove numeric prefix from prediction label
+  const displayPrediction = prediction ? prediction.replace(/^\d+/, '') : '';
+
   return (
     <div className={`rounded-lg border border-gray-200 shadow-sm ${className}`}>
       <div className="p-4">
@@ -56,7 +59,7 @@ const PredictionResult: React.FC<PredictionResultProps> = ({
             <div className="flex justify-between items-center">
               <div>
                 <span className="text-gray-500 text-sm">Classification</span>
-                <h4 className="text-xl font-semibold">{prediction}</h4>
+                <h4 className="text-xl font-semibold">{displayPrediction}</h4>
               </div>
               
               {confidence !== null && (
