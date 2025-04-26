@@ -85,23 +85,11 @@ const XAIVisualization: React.FC<XAIVisualizationProps> = ({
           </div>
         )}
         
-        {originalImage && overlayImage && !isLoading && !error && (
+        {overlayImage && !isLoading && !error && (
           <div className="space-y-4">
-            <div className="flex flex-col items-center sm:flex-row sm:justify-between sm:space-x-4">
-              {/* Original Image */}
-              <div className="mb-4 sm:mb-0 sm:w-1/2">
-                <p className="text-sm font-medium text-gray-700 mb-2">Original Image</p>
-                <div className="rounded border border-gray-200 bg-gray-50 p-1">
-                  <img 
-                    src={`data:image/png;base64,${originalImage}`} 
-                    alt="Original MRI scan" 
-                    className="w-full h-auto object-contain rounded max-h-64"
-                  />
-                </div>
-              </div>
-              
-              {/* Explanation Image */}
-              <div className="relative sm:w-1/2">
+            <div className="flex justify-center">
+              {/* Explanation Visualization */}
+              <div className="relative w-full max-w-md">
                 <p className="text-sm font-medium text-gray-700 mb-2">
                   {xaiMethod === 'gradcam' ? 'Grad-CAM Visualization' : 
                    xaiMethod === 'scorecam' ? 'Score-CAM Visualization' : 
