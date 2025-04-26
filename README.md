@@ -61,12 +61,24 @@ The project is divided into two main components:
 
 ## 🧠 Model Training
 
-To train a new model:
+### Local Training
+
+To train a new model locally:
 
 ```bash
 cd backend
 python scripts/train.py --data_dir /path/to/mri/dataset --split_dataset --batch_size 16 --epochs 30 --mixed_precision
 ```
+
+### Google Colab Training
+
+The model was trained using Google Colab with an NVIDIA A100-SXM4-40GB GPU for accelerated performance. See `colab_training.ipynb` for the complete training notebook.
+
+#### Training Results
+- **Test Accuracy**: 96.90%
+- **Test F1 Score**: 0.9686
+- **Training Time**: ~11-13s per epoch
+- **Convergence**: Early stopping at epoch 16 (best model at epoch 13)
 
 Important parameters:
 - `--data_dir`: Path to the dataset directory containing class subdirectories
