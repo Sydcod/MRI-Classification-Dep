@@ -2,6 +2,9 @@ import os
 import json
 import base64
 import requests
+import re
+from io import BytesIO
+from PIL import Image
 from flask import Blueprint, request, jsonify
 from dotenv import load_dotenv
 
@@ -46,6 +49,10 @@ def interpret_mri():
         prediction = data['prediction']
         confidence = data['confidence']
         
+        # Process and resize images to ensure they're properly formatted and not too large
+        original_image_processed = process_image_for_openai(original_image)
+        overlay_image_processed = process_image_for_openai(overlay_image)
+        
         # Prepare content for OpenAI Vision API
         prompt = generate_vision_prompt(prediction, confidence)
         
@@ -58,7 +65,7 @@ def interpret_mri():
             {
                 "type": "image_url",
                 "image_url": {
-                    "url": f"data:image/jpeg;base64,{original_image.split(',')[1] if ',' in original_image else original_image}",
+                    "url": original_image_processed,
                     "detail": "high"
                 }
             },
@@ -69,7 +76,7 @@ def interpret_mri():
             {
                 "type": "image_url",
                 "image_url": {
-                    "url": f"data:image/jpeg;base64,{overlay_image.split(',')[1] if ',' in overlay_image else overlay_image}",
+                    "url": overlay_image_processed,
                     "detail": "high"
                 }
             }
@@ -162,3 +169,60 @@ def call_openai_vision_api(content):
     return {
         'interpretation': interpretation
     }
+
+def process_image_for_openai(image_data):
+    """
+    Process an image for OpenAI Vision API by:
+    1. Extracting base64 data from data URI if needed
+    2. Resizing the image if it's too large
+    3. Re-encoding it as a proper data URI
+    
+    Args:
+        image_data (str): The image data as either data URI or base64
+        
+    Returns:
+        str: Processed image as data URI ready for OpenAI API
+    """
+    try:
+        # Extract base64 part if it's a data URI
+        if ',' in image_data:
+            # Get the MIME type from the data URI if available
+            mime_match = re.match(r'data:(image/[^;]+);base64,', image_data)
+            mime_type = mime_match.group(1) if mime_match else 'image/jpeg'
+            
+            # Extract the base64 part
+            base64_data = image_data.split(',', 1)[1]
+        else:
+            # If it's just base64, assume JPEG
+            mime_type = 'image/jpeg'
+            base64_data = image_data
+        
+        # Decode the base64 data
+        image_bytes = base64.b64decode(base64_data)
+        
+        # Open the image using PIL
+        img = Image.open(BytesIO(image_bytes))
+        
+        # Check if image needs resizing (OpenAI recommends < 20MB)
+        # We'll aim for much smaller to ensure reliability
+        MAX_SIZE = (800, 800)  # Reasonable size for medical images
+        if img.width > MAX_SIZE[0] or img.height > MAX_SIZE[1]:
+            img.thumbnail(MAX_SIZE, Image.LANCZOS)
+        
+        # Save the potentially resized image to bytes
+        buffered = BytesIO()
+        img.save(buffered, format="JPEG", quality=85)  # Use consistent format and quality
+        
+        # Get the new base64 encoded data
+        new_base64_data = base64.b64encode(buffered.getvalue()).decode('utf-8')
+        
+        # Return as proper data URI
+        return f"data:{mime_type};base64,{new_base64_data}"
+    
+    except Exception as e:
+        print(f"Error processing image for OpenAI: {str(e)}")
+        # Return the original if something goes wrong
+        if ',' in image_data and image_data.startswith('data:'):
+            return image_data
+        else:
+            return f"data:image/jpeg;base64,{image_data}"
