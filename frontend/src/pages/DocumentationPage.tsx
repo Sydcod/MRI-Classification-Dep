@@ -173,6 +173,29 @@ const DocumentationPage: React.FC = () => {
             Per-class metrics indicate robust performance across all categories, with slightly lower 
             performance on the meningioma class, likely due to its visual similarity to certain types of gliomas.
           </p>
+
+          <h3 className="text-xl font-semibold mt-6 mb-3">4.4 Training Convergence</h3>
+          <p>
+            The training process demonstrated efficient convergence, as shown in the learning curves below. 
+            The model was trained on a Google Colab environment with an NVIDIA A100 GPU, which significantly 
+            accelerated the training process.
+          </p>
+          
+          <div className="my-8 flex flex-col items-center">
+            <img 
+              src="/images/training_curves.png" 
+              alt="Training and Validation Learning Curves" 
+              className="w-full max-w-4xl rounded-lg shadow-md border border-gray-200"
+            />
+            <p className="text-gray-600 text-sm mt-3 max-w-4xl">
+              <strong>Figure 1:</strong> Training and validation learning curves showing model convergence over epochs. 
+              The blue lines represent training metrics (accuracy and loss), while the orange lines represent validation metrics. 
+              Note that the model reached peak validation accuracy around epoch 13, after which early stopping prevented 
+              overfitting. The close alignment between training and validation curves indicates good generalization, with 
+              minimal overfitting. The loss curve shows a steady decrease, while accuracy increases rapidly in the first few 
+              epochs and then plateaus, which is characteristic of a well-trained deep learning model.
+            </p>
+          </div>
         </section>
 
         <section id="xai" className="mb-10">
