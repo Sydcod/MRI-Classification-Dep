@@ -70,11 +70,10 @@ const SampleImages: React.FC<SampleImagesProps> = ({ onSelectSample, className =
           <button
             key={sample.id}
             onClick={() => loadSampleImage(sample)}
-            className="flex flex-col items-center p-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+            className="p-2 border border-gray-300 rounded-md hover:bg-blue-50 hover:border-blue-400 transition-colors text-center"
             title={`Load ${sample.name} for testing`}
           >
-            <span className="text-2xl mb-1">{sample.iconEmoji}</span>
-            <span className="text-xs text-gray-600">{sample.type}</span>
+            <span className="text-sm font-medium text-gray-700">{sample.type}</span>
           </button>
         ))}
       </div>
