@@ -149,15 +149,6 @@ const PredictPage: React.FC = () => {
             isLoading={isPredicting}
             error={predictionError}
           />
-          
-          <AIInterpretation
-            interpretation={interpretation}
-            isLoading={isInterpreting}
-            error={interpretationError}
-            onRequestInterpretation={handleGenerateInterpretation}
-            canRequestInterpretation={!!explanation && !isInterpreting}
-            className="mt-6"
-          />
         </div>
         
         {/* Right column - Visualization */}
@@ -172,6 +163,18 @@ const PredictPage: React.FC = () => {
             onMethodChange={handleMethodChange}
           />
         </div>
+      </div>
+      
+      {/* Full width AI Interpretation section */}
+      <div className="mt-10">
+        <AIInterpretation
+          interpretation={interpretation}
+          isLoading={isInterpreting}
+          error={interpretationError}
+          onRequestInterpretation={handleGenerateInterpretation}
+          canRequestInterpretation={!!explanation && !isInterpreting}
+          className="max-w-4xl mx-auto"
+        />
       </div>
     </div>
   );

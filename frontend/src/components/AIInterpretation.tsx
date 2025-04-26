@@ -37,14 +37,14 @@ const AIInterpretation: React.FC<AIInterpretationProps> = ({
 
   return (
     <div className={`rounded-lg border border-gray-200 shadow-sm ${className}`}>
-      <div className="p-4">
-        <h3 className="text-lg font-medium mb-4 text-gray-800">AI Medical Interpretation</h3>
+      <div className="p-6">
+        <h3 className="text-xl font-semibold mb-5 text-gray-800 text-center">AI Medical Interpretation</h3>
         
         {!interpretation && !isLoading && !error && (
-          <div className="text-center py-6">
-            <div className="mb-4">
+          <div className="text-center py-8">
+            <div className="mb-5">
               <svg 
-                className="w-12 h-12 mx-auto text-gray-400" 
+                className="w-16 h-16 mx-auto text-gray-400" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24" 
@@ -58,13 +58,13 @@ const AIInterpretation: React.FC<AIInterpretationProps> = ({
                 />
               </svg>
             </div>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600 mb-5 max-w-lg mx-auto">
               Generate an AI-powered medical interpretation of this MRI scan based on the classification and areas of interest.
             </p>
             <button
               onClick={onRequestInterpretation}
               disabled={!canRequestInterpretation}
-              className={`px-4 py-2 rounded-md font-medium transition-colors ${
+              className={`px-6 py-3 rounded-md font-medium transition-colors ${
                 canRequestInterpretation
                   ? 'bg-indigo-600 text-white hover:bg-indigo-700'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
@@ -76,9 +76,9 @@ const AIInterpretation: React.FC<AIInterpretationProps> = ({
         )}
         
         {isLoading && (
-          <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-500"></div>
-            <p className="ml-3 text-gray-600">Generating medical interpretation...</p>
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+            <p className="ml-4 text-gray-600 text-lg">Generating medical interpretation...</p>
           </div>
         )}
         
@@ -101,6 +101,7 @@ const AIInterpretation: React.FC<AIInterpretationProps> = ({
         
         {interpretation && !isLoading && !error && (
           <div 
+            className="max-w-3xl mx-auto"
             dangerouslySetInnerHTML={{ __html: formatInterpretation(interpretation) }}
           />
         )}
