@@ -4,9 +4,11 @@ from torchvision import models
 
 class DenseNet169MRI(nn.Module):
     """
-    DenseNet169 model adapted for brain MRI classification with grayscale input.
+    MobileNetV2 model adapted for brain MRI classification with grayscale input.
+    (Note: Class name kept as DenseNet169MRI for backward compatibility)
     
     Features:
+    - Uses lightweight MobileNetV2 architecture (much smaller memory footprint)
     - Adapts first layer for grayscale input
     - Preserves pretrained weights by averaging RGB channels
     - Customizable classification head
@@ -15,7 +17,7 @@ class DenseNet169MRI(nn.Module):
     
     def __init__(self, num_classes=4, pretrained=True):
         """
-        Initialize DenseNet169 model for MRI classification
+        Initialize MobileNetV2 model for MRI classification
         
         Args:
             num_classes (int): Number of output classes
@@ -23,32 +25,32 @@ class DenseNet169MRI(nn.Module):
         """
         super(DenseNet169MRI, self).__init__()
         
-        # Load pretrained model
+        # Load pretrained model - using MobileNetV2 instead of DenseNet169 to reduce memory usage
         if pretrained:
-            self.model = models.densenet169(weights='IMAGENET1K_V1')
+            self.model = models.mobilenet_v2(weights='IMAGENET1K_V1')
         else:
-            self.model = models.densenet169(weights=None)
+            self.model = models.mobilenet_v2(weights=None)
         
         # Adapt first convolutional layer to accept grayscale input (1 channel)
-        original_conv = self.model.features.conv0
-        self.model.features.conv0 = nn.Conv2d(
-            1, 64, kernel_size=7, stride=2, padding=3, bias=False
+        original_conv = self.model.features[0][0]
+        self.model.features[0][0] = nn.Conv2d(
+            1, 32, kernel_size=3, stride=2, padding=1, bias=False
         )
         
         # If using pretrained weights, adapt the first layer by averaging RGB channels
         if pretrained:
             with torch.no_grad():
-                self.model.features.conv0.weight = nn.Parameter(
+                self.model.features[0][0].weight = nn.Parameter(
                     original_conv.weight.mean(dim=1, keepdim=True)
                 )
         
         # Modify the classifier to match the number of classes
-        in_features = self.model.classifier.in_features
+        in_features = self.model.classifier[1].in_features
         self.model.classifier = nn.Sequential(
-            nn.Dropout(0.5),
+            nn.Dropout(0.2),
             nn.Linear(in_features, num_classes)
         )
-        
+    
     def forward(self, x):
         """Forward pass through the network"""
         return self.model(x)
@@ -65,40 +67,20 @@ class DenseNet169MRI(nn.Module):
             
     def freeze_up_to(self, block_number):
         """
-        Freeze layers up to a specific DenseBlock
+        Freeze layers up to a specific block
         
         Args:
             block_number (int): Block number up to which to freeze 
-                               (1-4 for DenseNet169)
+                               (0-16 for MobileNetV2 features)
         """
-        assert 0 <= block_number <= 4, "Block number must be between 0-4"
+        assert 0 <= block_number <= 17, "Block number must be between 0-17"
         
-        if block_number >= 0:
-            for param in self.model.features.conv0.parameters():
-                param.requires_grad = False
-            
-        if block_number >= 1:
-            for param in self.model.features.denseblock1.parameters():
-                param.requires_grad = False
-            for param in self.model.features.transition1.parameters():
-                param.requires_grad = False
-                
-        if block_number >= 2:
-            for param in self.model.features.denseblock2.parameters():
-                param.requires_grad = False
-            for param in self.model.features.transition2.parameters():
-                param.requires_grad = False
-                
-        if block_number >= 3:
-            for param in self.model.features.denseblock3.parameters():
-                param.requires_grad = False
-            for param in self.model.features.transition3.parameters():
-                param.requires_grad = False
-                
-        if block_number >= 4:
-            for param in self.model.features.denseblock4.parameters():
+        # Freeze up to the specified block number
+        for i in range(min(block_number + 1, len(self.model.features))):
+            for param in self.model.features[i].parameters():
                 param.requires_grad = False
                 
     def get_grad_cam_target_layer(self):
         """Return the target layer to use for Grad-CAM visualization"""
-        return self.model.features.denseblock4 
+        # Use the last convolutional layer for Grad-CAM
+        return self.model.features[-1]
