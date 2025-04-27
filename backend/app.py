@@ -1,6 +1,6 @@
 import os
 from flask import Flask, jsonify
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import torch
 
 # Import API blueprints
@@ -20,8 +20,20 @@ def create_app(config=None):
     """
     app = Flask(__name__)
     
-    # Enable CORS
-    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+    # Define allowed origins
+    allowed_origins = [
+        'https://mri-classification-frontend-wa7u.onrender.com',
+        'https://mri-classification-frontend.onrender.com',
+        'http://localhost:3000',
+        'http://localhost:5000'
+    ]
+    
+    # Enable CORS with specific settings
+    CORS(app, 
+         resources={r"/*": {"origins": allowed_origins}},
+         supports_credentials=True,
+         allow_headers=["Content-Type", "Authorization", "Accept"],
+         methods=["GET", "POST", "OPTIONS"])
     
     # Default configuration
     app.config.update(
@@ -46,6 +58,7 @@ def create_app(config=None):
     
     # Root route for health check
     @app.route('/')
+    @cross_origin()
     def index():
         """Root endpoint for API health check"""
         return jsonify({
@@ -82,4 +95,4 @@ if __name__ == '__main__':
     host = os.environ.get('FLASK_HOST', '0.0.0.0')
     port = int(os.environ.get('FLASK_PORT', 5000))
     
-    app.run(host=host, port=port) 
+    app.run(host=host, port=port)
