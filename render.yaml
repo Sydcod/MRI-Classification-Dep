@@ -19,7 +19,7 @@ services:
         fromService:
           name: mri-classification-frontend
           type: web
-          property: url
+          property: host
     healthCheckPath: /
     disk:
       name: mri-data
@@ -36,5 +36,5 @@ services:
         fromService:
           name: mri-classification-backend
           type: web
-          property: url
+          property: host
           append: /api
