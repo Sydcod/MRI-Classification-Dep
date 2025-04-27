@@ -103,7 +103,7 @@ def get_default_class_mapping():
     }
 
 @prediction_bp.route('/predict', methods=['POST'])
-@cross_origin()
+@cross_origin(origins='*', supports_credentials=True)
 def predict():
     """
     Endpoint to predict the class of an MRI image
@@ -198,4 +198,4 @@ def predict():
         return jsonify(response)
         
     except Exception as e:
-        return jsonify({'error': f'Prediction error: {str(e)}'}), 500 
+        return jsonify({'error': f'Prediction error: {str(e)}'}), 500
