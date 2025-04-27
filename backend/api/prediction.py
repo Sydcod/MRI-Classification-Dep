@@ -8,9 +8,9 @@ import numpy as np
 from PIL import Image
 import io
 import base64
-
 from backend.models.densenet169 import DenseNet169MRI
 from backend.data.preprocessing import preprocess_image_for_prediction
+from flask_cors import cross_origin
 
 # Create a Blueprint for prediction routes
 prediction_bp = Blueprint('prediction', __name__)
@@ -103,6 +103,7 @@ def get_default_class_mapping():
     }
 
 @prediction_bp.route('/predict', methods=['POST'])
+@cross_origin()
 def predict():
     """
     Endpoint to predict the class of an MRI image
