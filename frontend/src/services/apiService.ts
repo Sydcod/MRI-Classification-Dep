@@ -7,7 +7,7 @@ const apiClient = axios.create({
   headers: {
     'Accept': 'application/json',
   },
-  timeout: 30000, // 30 seconds timeout
+  timeout: 120000, // 120 seconds timeout
 });
 
 // Types
@@ -62,6 +62,7 @@ export const predictionService = {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        timeout: 180000, // 3 minute timeout for prediction to allow for model loading
       });
       
       console.log(`[${config.isProduction ? 'PROD' : 'DEV'}] Prediction response:`, response.data);
@@ -164,4 +165,4 @@ export const predictionService = {
   }
 };
 
-export default apiClient; 
+export default apiClient;
