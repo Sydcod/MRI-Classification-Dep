@@ -1,1 +1,1 @@
-web: cd backend && python scripts/download_model.py && gunicorn -w 4 "app:create_app()"
+web: python backend/scripts/download_model.py && gunicorn -w 4 -b 0.0.0.0:$PORT wsgi:app
