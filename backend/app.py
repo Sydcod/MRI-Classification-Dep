@@ -1,5 +1,5 @@
 import os
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request, make_response
 from flask_cors import CORS, cross_origin
 import torch
 
@@ -20,20 +20,32 @@ def create_app(config=None):
     """
     app = Flask(__name__)
     
-    # Define allowed origins
-    allowed_origins = [
-        'https://mri-classification-frontend-wa7u.onrender.com',
-        'https://mri-classification-frontend.onrender.com',
-        'http://localhost:3000',
-        'http://localhost:5000'
-    ]
-    
-    # Enable CORS with specific settings
+    # Enable CORS - use a simple configuration that allows all origins
     CORS(app, 
-         resources={r"/*": {"origins": allowed_origins}},
+         origins="*",
          supports_credentials=True,
-         allow_headers=["Content-Type", "Authorization", "Accept"],
+         allow_headers=["*"],
          methods=["GET", "POST", "OPTIONS"])
+    
+    # Additional CORS handling middleware for robustness
+    @app.after_request
+    def add_cors_headers(response):
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        return response
+    
+    # Handle OPTIONS requests explicitly
+    @app.route('/', defaults={'path': ''}, methods=['OPTIONS'])
+    @app.route('/<path:path>', methods=['OPTIONS'])
+    def options_handler(path):
+        response = make_response()
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        return response
     
     # Default configuration
     app.config.update(
