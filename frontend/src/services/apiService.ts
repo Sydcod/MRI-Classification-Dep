@@ -1,8 +1,9 @@
 import axios from 'axios';
+import config from '../config';
 
 // Base API configuration
 const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL: config.API_URL,
   headers: {
     'Accept': 'application/json',
   },
@@ -54,7 +55,7 @@ export const predictionService = {
     formData.append('model_id', modelId);
     
     try {
-      console.log('Sending prediction request to:', '/api/predict');
+      console.log(`[${config.isProduction ? 'PROD' : 'DEV'}] Sending prediction request to: ${config.API_URL}/predict`);
       console.log('Image file:', imageFile.name, imageFile.type, imageFile.size);
       
       const response = await apiClient.post('/predict', formData, {
@@ -63,7 +64,7 @@ export const predictionService = {
         },
       });
       
-      console.log('Prediction response:', response.data);
+      console.log(`[${config.isProduction ? 'PROD' : 'DEV'}] Prediction response:`, response.data);
       return response.data;
     } catch (error) {
       console.error('Prediction error:', error);
