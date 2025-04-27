@@ -58,23 +58,60 @@ export const predictionService = {
       console.log(`[${config.isProduction ? 'PROD' : 'DEV'}] Sending prediction request to: ${config.API_URL}/predict`);
       console.log('Image file:', imageFile.name, imageFile.type, imageFile.size);
       
+      // Add more detailed debugging for network issues
+      console.log('API base URL:', config.API_URL);
+      console.log('Full request URL:', `${config.API_URL}/predict`);
+      
       const response = await apiClient.post('/predict', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json',
         },
         timeout: 180000, // 3 minute timeout for prediction to allow for model loading
+        // Disable credentials to prevent CORS preflight issues
+        withCredentials: false,
       });
       
       console.log(`[${config.isProduction ? 'PROD' : 'DEV'}] Prediction response:`, response.data);
       return response.data;
     } catch (error) {
       console.error('Prediction error:', error);
-      if (axios.isAxiosError(error) && error.response) {
-        console.error('Response error data:', error.response.data);
-        console.error('Response status:', error.response.status);
-        throw new Error(error.response.data?.error || `Prediction failed with status ${error.response.status}`);
+      
+      // More detailed error logging
+      if (axios.isAxiosError(error)) {
+        console.error('Axios error details:', {
+          message: error.message,
+          code: error.code,
+          config: {
+            url: error.config?.url,
+            method: error.config?.method,
+            headers: error.config?.headers,
+            baseURL: error.config?.baseURL,
+            timeout: error.config?.timeout,
+          }
+        });
+        
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.error('Response error data:', error.response.data);
+          console.error('Response status:', error.response.status);
+          console.error('Response headers:', error.response.headers);
+          throw new Error(error.response.data?.error || `Prediction failed with status ${error.response.status}`);
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.error('Request was made but no response received');
+          throw new Error('Server did not respond to the prediction request. It may be unavailable or still loading the model.');
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.error('Error setting up the request:', error.message);
+          throw new Error(`Error setting up the prediction request: ${error.message}`);
+        }
       }
-      throw new Error('Network error occurred during prediction');
+      
+      // Generic network error
+      console.error('A network error occurred during prediction.');
+      throw new Error('Network error occurred during prediction. Please check your connection and try again.');
     }
   },
   
@@ -165,4 +202,4 @@ export const predictionService = {
   }
 };
 
-export default apiClient;
+export default apiClient; 
