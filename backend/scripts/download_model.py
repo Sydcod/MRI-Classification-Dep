@@ -99,7 +99,11 @@ def create_default_class_mapping(destination):
 
 def is_production():
     """Determine if the application is running in production"""
-    return os.environ.get('FLASK_ENV') == 'production'
+    # Check multiple environment variables to determine if in production
+    return (os.environ.get('FLASK_ENV') == 'production' or
+            os.environ.get('RENDER') == 'true' or  # Render.com specific
+            os.environ.get('RENDER_EXTERNAL_URL') is not None or
+            os.environ.get('ENVIRONMENT') == 'production')
 
 
 def main():
